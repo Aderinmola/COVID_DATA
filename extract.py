@@ -26,7 +26,31 @@ def download_google_drive_file():
         f.write(response.content)
     print('Data successfully downloaded to a file!!!')
 
+def load_data_to_db():
+    covid_data = pd.read_csv(
+        'covid_19_data.csv', 
+        parse_dates=['ObservationDate', 'LastUpdate']
+    )
+    covid_data.rename(
+                        columns={covid_data.columns[0]: 'serialNumber'},
+                        errors="raise",
+                        inplace=True
+                    )
+    covid_data['ObservationDate'] = covid_data['ObservationDate'].dt.date
+
+    # transform the column 
+    column_rename = covid_data.columns.map(lambda column: f"{column[0].lower()}{column[1:]}")
+    covid_data.columns = list(column_rename)
+
+    # load the data into database here
+    engine = create_engine(f'postgresql+psycopg2://{db_user_name}:{db_password}@{host}:{port}/{db_name}')
+    covid_data.to_sql('covid_19_data', con= engine, if_exists='replace', index= False)
+    print('Data successfully written to PostgreSQL database!!!')
+
 def main():
     download_google_drive_file()
+    load_data_to_db()
 
 main()
+
+
