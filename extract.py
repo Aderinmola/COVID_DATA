@@ -52,5 +52,3 @@ def main():
     load_data_to_db()
 
 main()
-
-
