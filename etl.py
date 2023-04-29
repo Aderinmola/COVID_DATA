@@ -2,7 +2,6 @@ import requests
 import pandas as pd
 from sqlalchemy import create_engine
 from dotenv import dotenv_values
-from datetime import datetime
 
 
 # A simple project to pull data from google drive
